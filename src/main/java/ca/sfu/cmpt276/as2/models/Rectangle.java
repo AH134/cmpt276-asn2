@@ -12,15 +12,18 @@ public class Rectangle {
     private double height;
     private String color;
     private String material;
+    private int durability;
+
 
     public Rectangle() {
     }
 
-    public Rectangle(double width, double height, String color, String material) {
+    public Rectangle(double width, double height, String color, String material, int durability) {
         this.width = width;
         this.height = height;
         this.color = color;
         this.material = material;
+        this.durability = durability;
     }
 
     public int getUid() {
@@ -43,6 +46,8 @@ public class Rectangle {
         return material;
     }
 
+    public int getDurability() {return durability;}
+
     public void setUid(int uid) {
         this.uid = uid;
     }
@@ -62,4 +67,7 @@ public class Rectangle {
     public void setMaterial(String material) {
         this.material = material;
     }
+
+    public void setDurability(int durability) {this.durability = durability;}
+
 }
