@@ -2,18 +2,32 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Document</title>
 </head>
 <body>
-
-<ol>
-    <li th:each="rect:${rectList}">
-        <span th:text="${rect.uid}"></span>
-        <span th:text="${rect.color}"></span>
-    </li>
-
-</ol>
+<h1>Backpack</h1>
+<div class="border-2 border-red-200 flex flex-row flex-wrap gap-4" >
+    <div class="border-2 border-slate-800 w-32 flex flex-col" th:each="r: ${rectList}">
+        <div class="m-2 w-24 h-14 self-center" th:classappend="'bg-[#' + ${r.color} + ']'"></div>
+        <div class="flex flex-wrap flex-col justify-center text-center">
+            <h5 th:text="${r.name}"></h5>
+            <div class="flex flex-row justify-center items-center">
+                <span th:each="i: ${#numbers.sequence(1, r.rarity)}">⭐</span>
+            </div>
+            <div class="flex justify-between pl-2 pr-2">
+                <form th:action="@{/rectangles/{id}(id=${r.uid})}" th:method="delete">
+                    <button type="submit">delete</button>
+                </form>
+                <form th:action="@{/api/rectangles/{id}(id=${r.uid})}" th:method="get">
+                    <button type="submit">details</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -6,13 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Controller
@@ -24,9 +22,19 @@ public class RectangleController {
     @RestController
     public class API {
         @GetMapping("/api/rectangles")
-        public List<Rectangle> getAllRectanglesAPI(Model model) {
-
+        public List<Rectangle> getAllRectanglesAPI() {
             return rectangleRepo.findAll();
+        }
+
+        @GetMapping("api/rectangles/{id}")
+        public Rectangle getRectangleByIdAPI(@PathVariable int id) {
+            Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
+            return rectangleOptional.orElse(null);
+        }
+
+        @PostMapping("api/rectangles/color")
+        public String getRectangleColorByIdAPI(@RequestParam Map<String, String> req) {
+            return req.get("color");
         }
     }
 
@@ -39,7 +47,37 @@ public class RectangleController {
     }
 
     @PostMapping("/rectangles/add")
-    public String addRectangle(@RequestParam Rectangle newRectangle, HttpServletResponse response) {
-        return "";
+    public String addRectangle(@RequestParam Map<String, String> newRectangle, HttpServletResponse response) {
+        String newName = newRectangle.get("name");
+        double newWidth = Double.parseDouble(newRectangle.get("width"));
+        double newHeight = Double.parseDouble(newRectangle.get("height"));
+        String newColor = newRectangle.get("color");
+        String newMaterial = newRectangle.get("material");
+        int newDurability = Integer.parseInt(newRectangle.get("durability"));
+        int newRarity = Integer.parseInt(newRectangle.get("rarity"));
+
+        rectangleRepo.save(new Rectangle(newName, newWidth, newHeight, newColor, newMaterial, newDurability, newRarity));
+        response.setStatus(201);
+
+        // temp redirect
+        return "rectangle/addedRectangle";
+    }
+
+    @DeleteMapping("/rectangles/{id}")
+    public String deleteRectangles(@PathVariable int id, HttpServletResponse response) {
+        Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
+        System.out.println(rectangleOptional.orElse(null));
+
+        // temp redirect
+        return "rectangle/deletedRectangle";
+    }
+
+    @PutMapping("/rectangles/{id}")
+    public String updateRectangles(@PathVariable int id, HttpServletResponse response) {
+        Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
+        System.out.println(rectangleOptional.orElse(null));
+
+        // temp redirect
+        return "rectangle/updatedRectangle";
     }
 }
