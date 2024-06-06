@@ -5,9 +5,58 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="output.css">
+    <script src="scripts/add.js" defer></script>
     <title>Document</title>
 </head>
 <body>
-add page
+<div class="w-3/5 m-auto">
+    <div class="flex flex-wrap justify-between border-4 border-gray-300 mt-4 p-2 items-center">
+        <h1 class="text-2xl">Add a new rectangle</h1>
+        <a class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-md text-sm px-5 py-2.5"
+           href="/rectangles/view">Back</a>
+    </div>
+    <form class="border border-gray-300 flex flex-col flex-wrap gap-4 p-1 justify-center items-center"
+          action="/rectangles/add" method="post">
+        <div>
+
+            <div>
+                <label for="name"></label>
+                <input class="border-2 border-slate-400 w-full" type="text" placeholder="Name" name="name" id="name">
+            </div>
+
+            <div class="flex justify-between mt-1">
+                <label for="width"></label>
+                <input class="border-2 border-slate-400 w-1/2" type="number" min="0" step="any" placeholder="Width"
+                       name="width" id="width">
+
+                <label for="height"></label>
+                <input class="border-2 border-slate-400 w-1/2" type="number" min="0" step="any" placeholder="Height"
+                       name="height" id="height">
+            </div>
+
+            <div>
+                <label for="material"></label>
+                <input class="border-2 border-slate-400 w-full" type="text" placeholder="Material" name="material"
+                       id="material">
+            </div>
+
+            <div>
+                <label for="durability"></label>
+                <input class="border-2 border-slate-400 w-full" type="number" min="0" max="100"
+                       placeholder="Durability" name="durability" id="durability">
+            </div>
+
+            <div>
+                <label for="color"></label>
+                <input class="border-2 border-slate-400 w-full" type="color" name="color" id="color">
+            </div>
+        </div>
+
+        <button class="w-20 h-10 rounded-md text-slate-100 bg-blue-700 hover:bg-blue-800 flex justify-center items-center"
+                type="submit">Create
+        </button>
+    </form>
+</div>
 </body>
 </html>

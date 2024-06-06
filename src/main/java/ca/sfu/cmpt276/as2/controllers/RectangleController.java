@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 
 @Controller
@@ -54,7 +55,7 @@ public class RectangleController {
         String newColor = newRectangle.get("color");
         String newMaterial = newRectangle.get("material");
         int newDurability = Integer.parseInt(newRectangle.get("durability"));
-        int newRarity = Integer.parseInt(newRectangle.get("rarity"));
+        int newRarity = new Random().nextInt(5) + 1;
 
         rectangleRepo.save(new Rectangle(newName, newWidth, newHeight, newColor, newMaterial, newDurability, newRarity));
         response.setStatus(201);
@@ -64,11 +65,18 @@ public class RectangleController {
     }
 
     @DeleteMapping("/rectangles/{id}")
-    public String deleteRectangles(@PathVariable int id, HttpServletResponse response) {
+    public String deleteRectangles(@PathVariable int id, HttpServletResponse response, Model model) {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
-        System.out.println(rectangleOptional.orElse(null));
 
-        // temp redirect
+        if (rectangleOptional.isPresent()) {
+            rectangleRepo.deleteById(rectangleOptional.get().getUid());
+            model.addAttribute("message", "Successfully deleted!");
+            response.setStatus(200);
+        } else {
+            model.addAttribute("message", "Failed to delete!");
+            response.setStatus(404);
+        }
+
         return "rectangle/deletedRectangle";
     }
 
