@@ -39,7 +39,7 @@ public class RectangleController {
         }
     }
 
-    @GetMapping("/rectangles/view")
+    @GetMapping("/rectangles")
     public String getAllRectangles(Model model) {
         List<Rectangle> rectangles = rectangleRepo.findAll();
         model.addAttribute("rectList", rectangles);
@@ -47,7 +47,7 @@ public class RectangleController {
         return "rectangle/showAll";
     }
 
-    @PostMapping("/rectangles/add")
+    @PostMapping("/rectangles")
     public String addRectangle(@RequestParam Map<String, String> newRectangle, HttpServletResponse response) {
         String newName = newRectangle.get("name");
         double newWidth = Double.parseDouble(newRectangle.get("width"));
@@ -63,6 +63,23 @@ public class RectangleController {
         // temp redirect
         return "rectangle/addedRectangle";
     }
+
+    @GetMapping("/rectangles/{id}")
+    public String getIndividualRectangle(@PathVariable int id, HttpServletResponse response, Model model) {
+        Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
+
+        if (rectangleOptional.isPresent()) {
+            model.addAttribute("rect", rectangleOptional.get());
+            response.setStatus(200);
+            return "rectangle/showOne";
+        } else {
+            // TODO make another page for error
+            model.addAttribute("message", "Failed to delete!");
+            response.setStatus(404);
+            return "rectangle/addedRectangle";
+        }
+    }
+
 
     @DeleteMapping("/rectangles/{id}")
     public String deleteRectangles(@PathVariable int id, HttpServletResponse response, Model model) {

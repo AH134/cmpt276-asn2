@@ -1,4 +1,5 @@
 const colorPicker = document.getElementById("color");
 colorPicker.addEventListener("change", (e) => {
-    colorPicker.value = e.value;
+console.log(e.target.value);
+    colorPicker.value = e.target.value;
 })

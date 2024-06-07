@@ -12,12 +12,16 @@
 <div class="w-3/5 m-auto">
     <div class="flex flex-wrap justify-between border-4 border-gray-300 mt-4 p-2 items-center">
         <h1 class="text-2xl">Backpack</h1>
-        <a class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-md text-sm px-5 py-2.5" href="/add.html">Add</a>
+        <a href="/add.html">
+            <button class="w-20 h-10 rounded-md text-slate-100 bg-blue-700 hover:bg-blue-800 flex justify-center items-center"
+            >Add
+            </button>
+        </a>
     </div>
     <div class="border border-gray-300 flex flex-row flex-wrap gap-4 p-1">
         <div class="border-2 border-slate-800 w-48 flex flex-col" th:each="r: ${rectList}">
             <div class="flex flex-row justify-center items-center">
-                <span th:each="i: ${#numbers.sequence(1, r.rarity)}">⭐</span>
+                <img th:src="@{/imgs/star.svg}" alt="star" width="20px" height="0px" th:each="i: ${#numbers.sequence(1, r.rarity)}">
             </div>
             <div class="m-2 mb-0 w-36 h-20 self-center" th:styleappend="'background-color: ' + ${r.color} + ';'"></div>
             <div class="flex flex-wrap flex-col justify-center text-center p-1">
@@ -28,11 +32,11 @@
                                 type="submit">Delete
                         </button>
                     </form>
-                    <form th:action="@{/api/rectangles/{id}(id=${r.uid})}" method="get">
+                    <a th:href="@{/rectangles/{id}(id=${r.uid})}">
                         <button class="w-20 h-10 rounded-md text-slate-100 bg-blue-700 hover:bg-blue-800 flex justify-center items-center"
-                                type="submit">Details
+                        >Details
                         </button>
-                    </form>
+                    </a>
                 </div>
             </div>
         </div>
