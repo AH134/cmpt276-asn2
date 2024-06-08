@@ -5,58 +5,74 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="output.css">
-    <script src="scripts/add.js" defer></script>
-    <title>Document</title>
+    <link rel="stylesheet" href="styles/output.css">
+    <script src="scripts/colorPicker.js" defer></script>
+    <title>asn2</title>
 </head>
 <body>
-<div class="w-3/5 m-auto">
+<div class="w-3/5 sm:w-[32rem] m-auto">
     <div class="flex flex-wrap justify-between border-4 border-gray-300 mt-4 p-2 items-center">
-        <h1 class="text-2xl">Add a new rectangle</h1>
         <a href="/rectangles">
-            <button class="w-20 h-10 rounded-md text-slate-100 bg-blue-700 hover:bg-blue-800 flex justify-center items-center"
+            <button class="w-20 h-10 rounded-md text-blue-100 bg-slate-600 hover:bg-slate-700 flex justify-center items-center"
             >Back
             </button>
         </a>
-    </div>
-    <form class="border border-gray-300 flex flex-col flex-wrap gap-4 p-1 justify-center items-center"
-          action="/rectangles" method="post">
-        <div>
-            <div class="mb-2">
-                <label for="name"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md" type="text" placeholder="Name" name="name" id="name">
-            </div>
-
-            <div class="flex justify-between mb-2">
-                <label for="width"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md mr-1" type="number" min="0" step="any" placeholder="Width"
-                       name="width" id="width">
-
-                <label for="height"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md ml-1" type="number" min="0" step="any" placeholder="Height"
-                       name="height" id="height">
-            </div>
-
-            <div class="flex justify-between mb-2">
-                <label for="material"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md mr-1" type="text" placeholder="Material" name="material"
-                       id="material">
-
-                <label for="color"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md ml-1" type="color" name="color" id="color">
-            </div>
-
-            <div class="mb-2">
-                <label for="durability"></label>
-                <input class="border-2 border-slate-400 w-full rounded-md" type="number" min="0" max="100"
-                       placeholder="Durability" name="durability" id="durability">
-            </div>
-        </div>
-
-        <button class="w-20 h-10 rounded-md text-slate-100 bg-blue-700 hover:bg-blue-800 flex justify-center items-center"
-                type="submit">Create
+        <h1 class="text-2xl">Add a new rectangle</h1>
+        <button id="form-button" type="submit" form="edit-form"
+                class="w-20 h-10 rounded-md text-slate-100 bg-blue-600 hover:bg-blue-700 flex justify-center items-center"
+        >Create
         </button>
-    </form>
+    </div>
+
+    <div class="border border-gray-300 flex flex-row flex-wrap p-1 justify-center items-center">
+        <div id="edit-container" class="w-[18rem] h-18 p-2 border-2 rounded-md">
+            <div id="edit-rectangle" class="w-full h-24 self-center" style="background-color: black;"></div>
+            <form id="edit-form" class="flex flex-col flex-wrap w-full"
+                  action="/rectangles" method="post">
+                <div>
+                    <div class="flex items-center items-center">
+                        <label class="text-lg" for="name">Name:</label>
+                        <input class="border-2 border-slate-400 w-full rounded-md ml-2 h-6" type="text"
+                               name="name" id="name">
+                    </div>
+
+                    <div class="flex items-center items-center">
+                        <label class="text-lg" for="width">Width:</label>
+                        <input class="border-2 border-slate-400 w-full rounded-md ml-2 h-6" type="number" min="0"
+                               step="any"
+                               name="width" id="width">
+                    </div>
+
+                    <div class="flex items-center items-center">
+                        <label class="text-lg" for="height">Height:</label>
+                        <input class="border-2 border-slate-400 w-full rounded-md ml-2 h-6" type="number" min="0"
+                               step="any"
+                               name="height" id="height">
+                    </div>
+
+                    <div class="flex items-center items-center">
+                        <label class="text-lg" for="material">Material:</label>
+                        <input class="border-2 border-slate-400 w-full rounded-md ml-2 h-6" type="text" name="material"
+                               id="material">
+
+                    </div>
+
+                    <div class="flex items-center items-center">
+                        <label class="text-lg w-1/2" for="color">Color (<span id="color-hexcode">#00000</span>):</label>
+                        <input class="border-2 border-slate-400 w-1/2 rounded-md ml-2 h-6" type="color" name="color"
+                               id="color">
+                    </div>
+
+                    <div class="flex items-center items-center">
+                        <label class="text-lg" for="durability">Durability:</label>
+                        <input class="border-2 border-slate-400 w-full rounded-md ml-2 h-6" type="number" min="0"
+                               max="100"
+                               name="durability" id="durability">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -4,6 +4,7 @@ import ca.sfu.cmpt276.as2.models.Rectangle;
 import ca.sfu.cmpt276.as2.models.RectangleRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,48 +20,33 @@ public class RectangleController {
     @Autowired
     private RectangleRepository rectangleRepo;
 
-    // TODO remove later
-    @RestController
-    public class API {
-        @GetMapping("/api/rectangles")
-        public List<Rectangle> getAllRectanglesAPI() {
-            return rectangleRepo.findAll();
-        }
-
-        @GetMapping("api/rectangles/{id}")
-        public Rectangle getRectangleByIdAPI(@PathVariable int id) {
-            Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
-            return rectangleOptional.orElse(null);
-        }
-
-        @PostMapping("api/rectangles/color")
-        public String getRectangleColorByIdAPI(@RequestParam Map<String, String> req) {
-            return req.get("color");
-        }
-    }
-
     @GetMapping("/rectangles")
     public String getAllRectangles(Model model) {
-        List<Rectangle> rectangles = rectangleRepo.findAll();
+        List<Rectangle> rectangles = rectangleRepo.findAll(Sort.by(Sort.Direction.ASC, "uid"));
         model.addAttribute("rectList", rectangles);
 
         return "rectangle/showAll";
     }
 
     @PostMapping("/rectangles")
-    public String addRectangle(@RequestParam Map<String, String> newRectangle, HttpServletResponse response) {
-        String newName = newRectangle.get("name");
-        double newWidth = Double.parseDouble(newRectangle.get("width"));
-        double newHeight = Double.parseDouble(newRectangle.get("height"));
-        String newColor = newRectangle.get("color");
-        String newMaterial = newRectangle.get("material");
-        int newDurability = Integer.parseInt(newRectangle.get("durability"));
-        int newRarity = new Random().nextInt(5) + 1;
+    public String addRectangle(@RequestParam Map<String, String> newRectangle, HttpServletResponse response, Model model) {
+        try {
+            String newName = newRectangle.get("name");
+            double newWidth = Double.parseDouble(newRectangle.get("width"));
+            double newHeight = Double.parseDouble(newRectangle.get("height"));
+            String newColor = newRectangle.get("color");
+            String newMaterial = newRectangle.get("material");
+            int newDurability = Integer.parseInt(newRectangle.get("durability"));
+            int newRarity = new Random().nextInt(5) + 1;
 
-        rectangleRepo.save(new Rectangle(newName, newWidth, newHeight, newColor, newMaterial, newDurability, newRarity));
-        response.setStatus(201);
+            rectangleRepo.save(new Rectangle(newName, newWidth, newHeight, newColor, newMaterial, newDurability, newRarity));
+            response.setStatus(201);
+        } catch (Exception e) {
+            model.addAttribute("message", "Unexpected Error Occurred!");
+            response.setStatus(500);
+            return "rectangle/error";
+        }
 
-        // temp redirect
         return "rectangle/addedRectangle";
     }
 
@@ -68,16 +54,15 @@ public class RectangleController {
     public String getIndividualRectangle(@PathVariable int id, HttpServletResponse response, Model model) {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
 
-        if (rectangleOptional.isPresent()) {
-            model.addAttribute("rect", rectangleOptional.get());
-            response.setStatus(200);
-            return "rectangle/showOne";
-        } else {
-            // TODO make another page for error
-            model.addAttribute("message", "Failed to delete!");
+        if (rectangleOptional.isEmpty()) {
+            model.addAttribute("message", "No such rectangle with id: " + id);
             response.setStatus(404);
-            return "rectangle/addedRectangle";
+            return "rectangle/error";
         }
+
+        model.addAttribute("rect", rectangleOptional.get());
+        response.setStatus(200);
+        return "rectangle/showOne";
     }
 
 
@@ -85,24 +70,41 @@ public class RectangleController {
     public String deleteRectangles(@PathVariable int id, HttpServletResponse response, Model model) {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
 
-        if (rectangleOptional.isPresent()) {
-            rectangleRepo.deleteById(rectangleOptional.get().getUid());
-            model.addAttribute("message", "Successfully deleted!");
-            response.setStatus(200);
-        } else {
+        if (rectangleOptional.isEmpty()) {
             model.addAttribute("message", "Failed to delete!");
             response.setStatus(404);
+            return "rectangle/error";
         }
 
+        rectangleRepo.deleteById(rectangleOptional.get().getUid());
+        model.addAttribute("message", "Successfully deleted!");
+        response.setStatus(200);
         return "rectangle/deletedRectangle";
     }
 
     @PutMapping("/rectangles/{id}")
-    public String updateRectangles(@PathVariable int id, HttpServletResponse response) {
+    public String updateRectangles(@PathVariable int id, @RequestParam Map<String, String> updatedRectangle, HttpServletResponse response, Model model) {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
         System.out.println(rectangleOptional.orElse(null));
+        System.out.println(updatedRectangle);
+        try {
+            if (rectangleOptional.isPresent()) {
+                Rectangle rectangle = rectangleOptional.get();
+                rectangle.setName(updatedRectangle.get("name"));
+                rectangle.setWidth(Double.parseDouble(updatedRectangle.get("width")));
+                rectangle.setHeight(Double.parseDouble(updatedRectangle.get("height")));
+                rectangle.setColor(updatedRectangle.get("color"));
+                rectangle.setMaterial(updatedRectangle.get("material"));
+                rectangle.setDurability(Integer.parseInt(updatedRectangle.get("durability")));
 
-        // temp redirect
+                rectangleRepo.save(rectangle);
+            }
+        } catch (Exception e) {
+            model.addAttribute("message", "Invalid inputs!");
+            response.setStatus(500);
+            return "rectangle/error";
+        }
+
         return "rectangle/updatedRectangle";
     }
 }
