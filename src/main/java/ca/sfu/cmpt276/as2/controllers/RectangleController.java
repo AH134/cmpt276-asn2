@@ -21,9 +21,11 @@ public class RectangleController {
     private RectangleRepository rectangleRepo;
 
     @GetMapping("/rectangles")
-    public String getAllRectangles(Model model) {
+    public String getAllRectangles(HttpServletResponse response, Model model) {
         List<Rectangle> rectangles = rectangleRepo.findAll(Sort.by(Sort.Direction.ASC, "uid"));
+
         model.addAttribute("rectList", rectangles);
+        response.setStatus(200);
 
         return "rectangle/showAll";
     }
@@ -40,12 +42,16 @@ public class RectangleController {
             int newRarity = new Random().nextInt(5) + 1;
 
             rectangleRepo.save(new Rectangle(newName, newWidth, newHeight, newColor, newMaterial, newDurability, newRarity));
-            response.setStatus(201);
+
         } catch (Exception e) {
-            model.addAttribute("message", "Unexpected Error Occurred!");
+            model.addAttribute("message", "Invalid inputs");
             response.setStatus(500);
+
             return "rectangle/error";
         }
+
+        model.addAttribute("message", "Successfully added rectangle with name: " + newRectangle.get("name"));
+        response.setStatus(201);
 
         return "rectangle/addedRectangle";
     }
@@ -55,13 +61,15 @@ public class RectangleController {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
 
         if (rectangleOptional.isEmpty()) {
-            model.addAttribute("message", "No such rectangle with id: " + id);
+            model.addAttribute("message", "Rectangle with id: " + id + " does not exist");
             response.setStatus(404);
+
             return "rectangle/error";
         }
 
         model.addAttribute("rect", rectangleOptional.get());
         response.setStatus(200);
+
         return "rectangle/showOne";
     }
 
@@ -77,16 +85,15 @@ public class RectangleController {
         }
 
         rectangleRepo.deleteById(rectangleOptional.get().getUid());
-        model.addAttribute("message", "Successfully deleted!");
+        model.addAttribute("message", "Successfully deleted rectangle with id: " + id);
         response.setStatus(200);
+
         return "rectangle/deletedRectangle";
     }
 
     @PutMapping("/rectangles/{id}")
     public String updateRectangles(@PathVariable int id, @RequestParam Map<String, String> updatedRectangle, HttpServletResponse response, Model model) {
         Optional<Rectangle> rectangleOptional = rectangleRepo.findById(id);
-        System.out.println(rectangleOptional.orElse(null));
-        System.out.println(updatedRectangle);
         try {
             if (rectangleOptional.isPresent()) {
                 Rectangle rectangle = rectangleOptional.get();
@@ -100,10 +107,14 @@ public class RectangleController {
                 rectangleRepo.save(rectangle);
             }
         } catch (Exception e) {
-            model.addAttribute("message", "Invalid inputs!");
+            model.addAttribute("message", "Invalid inputs");
             response.setStatus(500);
+
             return "rectangle/error";
         }
+
+        model.addAttribute("message", "Successfully updated rectangle with id: " + id);
+        response.setStatus(201);
 
         return "rectangle/updatedRectangle";
     }
